@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VPS Backup — Personal Backup Utility</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { max-width: 46rem; margin: 3rem auto; padding: 0 1.25rem;
+         font: 16px/1.65 -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  h1 { font-size: 1.9rem; margin-bottom: .25rem; }
+  h2 { font-size: 1.2rem; margin-top: 2rem; border-bottom: 1px solid #8884; padding-bottom: .3rem; }
+  .sub { opacity: .72; margin-top: 0; }
+  code { background: #8881; padding: .12em .35em; border-radius: 4px; font-size: .92em; }
+  ul { padding-left: 1.2rem; }
+  footer { margin-top: 3rem; opacity: .72; font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<h1>VPS Backup</h1>
+<p class="sub">A personal, self-hosted backup utility. Last updated: October 2026.</p>
+
+<h2>What this application is</h2>
+<p>
+  <strong>VPS Backup</strong> is a private, single-user tool that backs up the files and
+  databases of one self-hosted virtual private server to that same server operator's
+  own cloud storage. It is not a public service: it has no sign-up, no web front end,
+  and no other users. It exists so that the operator does not lose configuration,
+  source code and database contents if the server's disk fails.
+</p>
+
+<h2>What it does</h2>
+<ul>
+  <li>Runs a scheduled job once a day on the server.</li>
+  <li>Collects the server's own configuration files and service data.</li>
+  <li>Creates compressed database dumps of services running on that server.</li>
+  <li>Encrypts everything locally with <code>restic</code> (client-side encryption,
+      content and file names) before anything leaves the machine.</li>
+  <li>Uploads the encrypted, deduplicated snapshots to the operator's own
+      Google Drive storage using <code>rclone</code>.</li>
+</ul>
+
+<h2>Use of Google Drive</h2>
+<p>
+  The application requests exactly one Google OAuth scope:
+  <code>https://www.googleapis.com/auth/drive</code>. It is used solely to create,
+  read and delete its own backup files inside the operator's own Google Drive account.
+  The application does not read, modify, or share any other files in that Drive, and it
+  never accesses any other Google account.
+</p>
+<p>
+  Data sent to Google Drive is already encrypted on the server before upload, so the
+  stored objects contain no readable content. The application does not send Google user
+  data to any third party, does not use it for advertising, and does not use it to train
+  machine-learning models. See the <a href="./privacy.html">Privacy Policy</a> for details.
+</p>
+
+<h2>Technical summary</h2>
+<ul>
+  <li><strong>Client:</strong> <code>rclone</code> (Google Drive backend, Desktop OAuth client)</li>
+  <li><strong>Backup engine:</strong> <code>restic</code> — deduplication, snapshots, client-side encryption</li>
+  <li><strong>Schedule:</strong> daily, operated by <code>systemd</code> timers</li>
+  <li><strong>Operator:</strong> one person, on one machine, using one Google account</li>
+</ul>
+
+<footer>
+  <a href="./privacy.html">Privacy Policy</a>
+</footer>
+
+</body>
+</html>
